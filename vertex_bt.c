@@ -6,6 +6,8 @@
  * with the score just calculated. 
  **/
 
+#include "graph.h"
+
 // Global Variables
 igraph_t graph; // the graph 
 int vcount;  // the number of vertices in graph
@@ -53,8 +55,8 @@ struct Compare find_max_betweenness() {
     // will both have dummy values of negative one since no vertex from
     // the graph has had its betweenness score calculated yet.
     struct Compare max_vertex; // the struct 
-    max_vertex.betweenness = -1; // max score given dummy value
-    max_vertex.vid = -1; // vertex ID of max score given dummy value
+    max_vertex.max_betweenness_score = -1; // max score given dummy value
+    max_vertex.vertex_id = -1; // vertex ID of max score given dummy value
 
     // Iterate over the number of vertices in the graph. Each iteration
     // will represent a new vertex.
