@@ -1,5 +1,11 @@
 # BetweennessCentrality
 
+JMU CS470 project by Brittany Braswell, Jake Hawkins, and Kyle Laker. Based
+on "Analysis of parallel implementations of centrality algorithms" by
+Patricia D. Soriano, Kevin H. Amrein, Sam P. Carswell, and Michael O. Lam.
+
+[Code for previous work](https://github.com/kevamrein/CS470Project)
+
 ## Building
 
 To build the project with both betweeness centrality binaries, run
