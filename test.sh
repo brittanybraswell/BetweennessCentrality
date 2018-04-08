@@ -4,13 +4,15 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 
+source ./setup.sh
+
 labels=("Zachary's Karate Club" "Dolphin Network" "Les Miserables Network")
 texts=("data/edges.txt" "data/dolphin.txt" "data/lesmis.txt")
-files=("vertex_bt")
+files=("vertex_bt edge_bt")
 index=0
 
-make clean -C bc
-make -C bc
+make clean
+make
 
 echo ""
 echo "-----FIND IMPORTANT VERTEX-----"
@@ -24,7 +26,7 @@ do
         for i in 1 2 4 8 16
         do
             printf "Thread Count: %d\t" "$i"
-            OMP_NUM_THREADS=${i} ./bc/$file bc/$text
+            OMP_NUM_THREADS=${i} ./$file bc/$text
         done
     done
     index=$((index+1))
@@ -45,7 +47,7 @@ do
         for i in 1 4 8 16
         do
             printf "Thread Count: %d\t" "$i"
-            OMP_NUM_THREADS=${i} ./bc/$file bc/$text
+            OMP_NUM_THREADS=${i} ./$file bc/$text
         done
     done
     index=$((index+1))

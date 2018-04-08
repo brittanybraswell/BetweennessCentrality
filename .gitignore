@@ -1,3 +1,7 @@
+# Project executables
+edge_bt
+vertex_bt
+
 # Prerequisites
 *.d
 
