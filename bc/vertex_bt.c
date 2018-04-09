@@ -6,42 +6,24 @@
  * with the score just calculated. 
  **/
 
-#include "graph.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-// Global Variables
-igraph_t graph; // the graph 
-int vcount;  // the number of vertices in graph
-
-// This struct will hold the maximum betweenness score and the vertex
-// that has that maximum betweenness score. The maximum betweenness
-// score is the vertex that has the most shortest paths passing through
-// it. The max score will be compared to the score calculated for each
-// vertex and replaced if that vertex has a larger score. The vertex
-// id will also be changed to the id of that vertex. The ID is given
-// by iterating through the number of vertices in the graph (vcount)
-// and assigning the current vertex number to the vertex ID variable.
-typedef struct Compare {
-    double max_betweenness_score; // max score out of all vertices 
-    int vertex_id; // ID given by iterating through vcount
-} Compare;
-
-// Function Prototype for calculating the max betweenness score
-struct Compare find_max_betweenness();
+#include "graph.h"
+#include "util.h"
 
 /**
  * Calculates the vertex with the maximum betweenness score by calling
  * find_max_betweenness() and prints the execution time.
  **/
 int main(int argc, char *argv[]) {
-    graph = create_graph(argv[1]); // creates graph of given dataset
+    igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
 
-    vcount = igraph_vcount(&graph); // number of vertices in graph
+    int vcount = igraph_vcount(&graph); // number of vertices in graph
 
     START_TIMER(find_max)
-        struct Compare current_max = find_max_betweenness();
+    compare_t current_max = find_max_betweenness(&graph, vcount);
     STOP_TIMER(find_max);
 
     printf("Time: %f\n", GET_TIMER(find_max));
@@ -52,14 +34,14 @@ int main(int argc, char *argv[]) {
 /**
  * Calculates the maximum betweenness score of the graph.
  **/
-struct Compare find_max_betweenness() {
+compare_t find_max_betweenness(igraph_t *graph, int vcount) {
     int curr_vertex_id; // current value in vcount
     // the max betweenness score and vertex id that has that max score
     // will both have dummy values of negative one since no vertex from
     // the graph has had its betweenness score calculated yet.
-    struct Compare max_vertex; // the struct 
+    compare_t max_vertex; // the struct 
     max_vertex.max_betweenness_score = -1; // max score given dummy value
-    max_vertex.vertex_id = -1; // vertex ID of max score given dummy value
+    max_vertex.id = -1; // vertex ID of max score given dummy value
 
     // Iterate over the number of vertices in the graph. Each iteration
     // will represent a new vertex.
@@ -70,7 +52,7 @@ struct Compare find_max_betweenness() {
         igraph_vector_t result; // holds betweenness score 
         igraph_vector_init(&result, 0); // initialize result vector
         igraph_vs_1(&curr_vertex, curr_vertex_id); // get current vertex
-        igraph_betweenness(&graph, &result, curr_vertex, IGRAPH_UNDIRECTED, 0, 1);
+        igraph_betweenness(graph, &result, curr_vertex, IGRAPH_UNDIRECTED, 0, 1);
         double betweenness_score = (double) VECTOR(result)[0];
 
 	// If the betweenness score of the current vertex is greater
@@ -79,14 +61,14 @@ struct Compare find_max_betweenness() {
 #       pragma omp critical
         if (betweenness_score > max_vertex.max_betweenness_score) {
             max_vertex.max_betweenness_score = betweenness_score;
-            max_vertex.vertex_id = curr_vertex_id;
+            max_vertex.id = curr_vertex_id;
         }
 
         igraph_vector_destroy(&result); // every vector object is destroyed
         igraph_vs_destroy(&curr_vertex); // every vertex selector is destroyed
     }
 
-    printf("\tVertex: %d\t", max_vertex.vertex_id);
+    printf("\tVertex: %d\t", max_vertex.id);
     return max_vertex; 
 }
 
