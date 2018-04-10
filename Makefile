@@ -27,6 +27,6 @@ degree: graph.o degree.o
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o vertex_bt edge_bt 
+	rm -f *.o vertex_bt edge_bt degree
 
 .PHONY: all default clean
