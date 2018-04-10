@@ -12,6 +12,10 @@
  * degree centrality. It is just in this folder to make things easier for us.
  */
 
+/*
+ * Winner should be the only one of this struct, so don't even name the
+ * type.
+ */
 struct {
     double score;
     int id;
@@ -20,9 +24,16 @@ struct {
 double get_degree(igraph_t*, int);
 
 int main(int argc, char *argv[]) {
-    igraph_t graph = create_directed_graph(argv[1]); // creates graph of given dataset
+    /*
+     * Try this with a directed graph; to me this makes more sense with our
+     * datasets.
+     */
+    igraph_t graph = create_directed_graph(argv[1]);
 
-    int vcount = igraph_vcount(&graph); // number of edges in graph
+    /*
+     * Get a count of all the vertices in the graph.
+     */
+    int vcount = igraph_vcount(&graph);
 
     START_TIMER(find_max)
     /*
@@ -44,6 +55,10 @@ int main(int argc, char *argv[]) {
     for (int vertex = 0; vertex < vcount; vertex++) {
         double result = get_degree(&graph, vertex);
 #       pragma omp critical
+        /*
+         * Replace the winner with the current item if the result is greater
+         * than the max result
+         */
         if (result > winner.score) {
             winner.score = result;
             winner.id = vertex;
@@ -59,14 +74,19 @@ int main(int argc, char *argv[]) {
 
 double get_degree(igraph_t *graph, int vertex_id) {
     igraph_vector_t degree;
+    // I don't actually know what this does, but it seems to be necessary
     igraph_vs_t vs = igraph_vss_1(vertex_id);
 
+    // Initialize the degree vector
     igraph_vector_init(&degree, 1);
 
+    // Get the degree of the vertex
     igraph_degree(graph, &degree, vs, IGRAPH_ALL, true);
 
+    // Retrieve the degree from the vector
     int result = VECTOR(degree)[0];
 
+    // Clean up the vector before returning
     igraph_vector_destroy(&degree);
 
     return result;
