@@ -1,6 +1,7 @@
 # Project executables
 edge_bt
 vertex_bt
+degree
 
 # Prerequisites
 *.d
