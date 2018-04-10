@@ -20,7 +20,7 @@ struct {
 double get_degree(igraph_t*, int);
 
 int main(int argc, char *argv[]) {
-    igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
+    igraph_t graph = create_directed_graph(argv[1]); // creates graph of given dataset
 
     int vcount = igraph_vcount(&graph); // number of edges in graph
 

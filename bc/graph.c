@@ -21,6 +21,32 @@ void print_vector(igraph_vector_t *v, FILE *f) {
 }
 
 /*
+ * Creates a graph given a text file with edges. The graph is directed.
+ * Currently, this is meant to be used for testing.
+ */
+igraph_t create_directed_graph(char *file_name) {
+    igraph_t g;
+    int size, f, index = 0;
+
+    /* Open a file */ 
+    FILE *file = fopen (file_name, "r");
+    fscanf(file, "%d", &size);  //size of vectors needed, edges x 2
+
+    /* Initialize a vector: IGraph's internal struct */
+    igraph_vector_init(&v, size);
+
+    /* Read in a node and assign it to 1 vector at a time */
+    while(fscanf(file, "%d", &f) > 0) {
+        VECTOR(v)[index++] = f-1;
+    }
+
+    fclose(file);
+    igraph_create(&g, &v, 0, IGRAPH_DIRECTED);
+
+    return g;
+}
+
+/*
  * Creates a graph given a text file with edges
  */
 igraph_t create_graph(char* file_name) {
