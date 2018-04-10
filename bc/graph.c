@@ -13,11 +13,11 @@ igraph_vector_t v;  //global variable
  *
  */
 void print_vector(igraph_vector_t *v, FILE *f) {
-    long int i;
-    for (i = 0; i < igraph_vector_size(v); i++) {
-        fprintf(f, " %li", (long int) VECTOR(*v)[i]);
-    }
-    fprintf(f, "\n");
+  long int i;
+  for (i=0; i<igraph_vector_size(v); i++) {
+    fprintf(f, "%.5f\n", (double) VECTOR(*v)[i]);
+  }
+  fprintf(f, "\n");
 }
 
 /*
