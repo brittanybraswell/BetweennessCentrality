@@ -32,37 +32,6 @@ int main(int argc, char *argv[]) {
 }
 
 /**
- *  * Calculates the maximum betweenness score of the graph.
- *   **/
-/*compare_t find_max_betweenness(igraph_t *graph, int vcount) {
-
-  igraph_vector_t vb;
-  igraph_vector_init(&vb, vcount);
-  igraph_betweenness(graph, &vb, igraph_vss_all(), IGRAPH_UNDIRECTED, 0, 1);
-
-  int curr_vertex_id;
-  compare_t max_vertex; // the struct 
-  max_vertex.max_betweenness_score = -1; // max score given dummy value
-  max_vertex.id = -1; // vertex ID of max score given dummy value
-
-#   pragma omp parallel for default(none) shared(vcount,graph,max_vertex,vb) \
-    private(curr_vertex_id)
-  for (curr_vertex_id = 0; curr_vertex_id < vcount; curr_vertex_id+=1) {
-        double betweenness_score = (double) VECTOR(vb)[curr_vertex_id];
-#       pragma omp critical
-        if (betweenness_score > max_vertex.max_betweenness_score) {
-            max_vertex.max_betweenness_score = betweenness_score;
-            max_vertex.id = curr_vertex_id;
-        }
-    }
-
-  printf("\tVertex: %d\t", max_vertex.id);
-  igraph_vector_destroy(&vb);
-  igraph_destroy(graph);
-  return max_vertex;
-}*/
-
-/**
  * Calculates the maximum betweenness score of the graph.
  **/
 compare_t find_max_betweenness(igraph_t *graph, int vcount) {
