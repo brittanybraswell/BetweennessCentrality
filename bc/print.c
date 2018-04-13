@@ -1,4 +1,4 @@
-include <igraph.h>
+#include <igraph.h>
 #include <stdio.h>
 #include "graph.h"
 #include "util.h"
