@@ -11,6 +11,7 @@ typedef struct edge {
 } edge;
 
 void print_vector(igraph_vector_t *, FILE *);
+igraph_t create_directed_graph(char *file_name);
 igraph_t create_graph(char*);
 struct edge* get_edges(igraph_t);
 

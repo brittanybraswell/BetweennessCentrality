@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --job-name=final-proj
+#SBATCH --job-name=betweenness
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 
@@ -8,7 +8,7 @@ source ./setup.sh
 
 labels=("Zachary's Karate Club" "Dolphin Network" "Les Miserables Network")
 texts=("data/edges.txt" "data/dolphin.txt" "data/lesmis.txt")
-files=("vertex_bt" "edge_bt")
+files=("vertex_bt" "vertex_estimate" "edge_bt")
 index=0
 
 make clean
