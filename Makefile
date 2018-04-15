@@ -7,12 +7,12 @@ override CFLAGS := -std=c99 -O2 -fopenmp -ligraph $(CLUSTER_CFLAG) $(CFLAGS)
 override LDFLAGS := -fopenmp -ligraph $(CLUSTER_LDFLAG) $(LDFLAGS)
 
 SRCDIR=bc
-SRCS=graph.c vertex_bt.c edge_bt.c degree.c vertex_estimate.c
+SRCS=graph.c vertex_bt.c edge_bt.c degree.c vertex_estimate.c print.c
 OBJS=$(SRCS:.c=.o)
 
 default: all
 
-all: edge_bt vertex_bt degree vertex_estimate
+all: edge_bt vertex_bt degree vertex_estimate print
 
 edge_bt: graph.o edge_bt.o
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -26,10 +26,13 @@ degree: graph.o degree.o
 vertex_estimate: graph.o vertex_estimate.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
+print: graph.o print.o
+	$(CC) $(LDFLAGS) $^ -o $@
+
 %.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o vertex_bt edge_bt degree vertex_estimate
+	rm -f *.o vertex_bt edge_bt degree vertex_estimate print
 
 .PHONY: all default clean

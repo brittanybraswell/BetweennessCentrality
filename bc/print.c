@@ -1,8 +1,22 @@
 #include <igraph.h>
 #include <stdio.h>
+
 #include "graph.h"
+#include "print.h"
 #include "util.h"
 
+int print_graph(igraph_t *graph, char *out_path) {
+    FILE *out_file = fopen(out_path, "w");
+    if (out_file == NULL) {
+        return 1;
+    }
+
+    int retval = igraph_write_graph_gml(graph, out_file, NULL, 0);
+
+    // close the file stream before returning
+    fclose(out_file);
+    return retval;
+}
 
 /*
  *
@@ -23,32 +37,13 @@ int main(int argc, char* argv[]) {
     char *fi = argv[1];
     char *fo = argv[2];
 
-    igraph_vector_t v;
-    igraph_t g;
+    igraph_t g = create_graph(fi);
 
-    int size, f, index = 0;
-
-    /* Open a file */
-    FILE *in_file = fopen (fi, "r");
-    fscanf(in_file, "%d", &size);               //size of vectors needed, edges x 2
-    /* Initialize a vector: IGraph's internal struct */
-    igraph_vector_init(&v, size);
-
-    /* Read in a node and assign it to 1 vector at a time */
-    while(fscanf(in_file, "%d", &f) > 0) {
-        VECTOR(v)[index++] = f-1;
-    }
-
-    fclose(in_file);
-    igraph_create(&g, &v, 0, IGRAPH_UNDIRECTED);
-
-    FILE *out_file = fopen(fo, "w");
-    if (out_file == 0) {
-        printf("ERROR: Could not open out-file\n");
+    if (print_graph(&g, fo) != 0) {
+        fprintf(stderr, "ERROR: Could not write graph to out-file\n");
         return EXIT_FAILURE;
     }
 
-    igraph_write_graph_gml(&g, out_file, 0, fo);
     igraph_destroy(&g);
 
     return EXIT_SUCCESS;
