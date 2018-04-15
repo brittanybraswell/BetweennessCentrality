@@ -21,6 +21,28 @@ void print_vector(igraph_vector_t *v, FILE *f) {
 }
 
 /*
+ * Creates a graph given a gml file.
+ */
+igraph_t gml_create_graph(char *file_name) {
+    igraph_t g;
+    /* Open a file */
+    FILE *file = fopen (file_name, "r");
+    igraph_read_graph_gml(&g, file);
+    return g;
+}
+
+/*
+ * Creates a graph given a csv file.
+ */
+igraph_t csv_create_graph(char *file_name) {
+    igraph_t g;
+    /* Open a file */
+    FILE *file = fopen (file_name, "r");
+    igraph_read_graph_edgelist(&g, file, 0, IGRAPH_UNDIRECTED);
+    return g;
+}
+
+/*
  * Creates a graph given a text file with edges. The graph is directed.
  * Currently, this is meant to be used for testing.
  */

@@ -10,7 +10,8 @@
  * find_max_betweenness() and prints the execution time.
  **/
 int main(int argc, char *argv[]) {
-    igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
+    igraph_t graph = csv_create_graph(argv[1]);
+//    igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
 
     int vcount = igraph_vcount(&graph); // number of vertices in graph
 
@@ -42,7 +43,8 @@ compare_t find_max_betweenness(igraph_t *graph, int vcount) {
         igraph_vector_t result; // holds betweenness score 
         igraph_vector_init(&result, 0); // initialize result vector
         igraph_vs_1(&curr_vertex, curr_vertex_id); // get current vertex
-        igraph_betweenness_estimate(graph, &result, curr_vertex, IGRAPH_UNDIRECTED, 5, 0, 0);
+        //igraph_betweenness_estimate(graph, &result, curr_vertex, IGRAPH_UNDIRECTED, 40, 0, 0);
+	 igraph_betweenness(graph, &result, curr_vertex, IGRAPH_UNDIRECTED, 0, 1);
         double betweenness_score = (double) VECTOR(result)[0];
 #       pragma omp critical
         if (betweenness_score > max_vertex.max_betweenness_score) {
