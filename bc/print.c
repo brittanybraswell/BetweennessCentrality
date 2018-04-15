@@ -5,6 +5,11 @@
 #include "print.h"
 #include "util.h"
 
+/*
+ * Prints a graph to a GML file. The graph should be provided as graph and
+ * the path to write to should be provided as out_path. This function will
+ * return a non-zero integer on error.
+ */
 int print_graph(igraph_t *graph, char *out_path) {
     FILE *out_file = fopen(out_path, "w");
     if (out_file == NULL) {
@@ -30,7 +35,7 @@ int print_graph(igraph_t *graph, char *out_path) {
 int main(int argc, char* argv[]) {
 
     if (argc != 3) {
-        printf("Usage: print <in-file> <out-file>\n");
+        fprintf(stderr, "Usage: print <in-file> <out-file>\n");
         return EXIT_FAILURE;
     }
 
