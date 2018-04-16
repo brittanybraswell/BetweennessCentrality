@@ -1,6 +1,11 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "graph.h"
+
+#define MAX_EXT_LEN 3
 
 /*
  * graph.c Contains helper methods 
@@ -68,6 +73,20 @@ igraph_t create_directed_graph(char *file_name) {
     return g;
 }
 
+igraph_t (*get_file_handler(char *filename))(char *) {
+    /* Get the last occurance of the . character */
+    char *dot = strrchr(filename, '.');
+    /*
+     * If there isn't one, just use csv_create_graph -- it's the more general
+     * function
+     */
+    if (!dot || dot == filename) return csv_create_graph;
+    /* The extension begins one character after dot, yay ptr arithmetic */
+    char *extension = (dot + 1);
+    bool is_gml = strncmp(extension, "gml", MAX_EXT_LEN);
+    return is_gml ? gml_create_graph : csv_create_graph;
+}
+
 /*
  * Creates a graph given a text file with edges
  */
@@ -75,22 +94,7 @@ igraph_t create_graph(char* file_name) {
     igraph_t g;
     int size, f, index = 0;
 
-    /* Open a file */ 
-    FILE *file = fopen (file_name, "r");
-    fscanf(file, "%d", &size);  //size of vectors needed, edges x 2
-
-    /* Initialize a vector: IGraph's internal struct */
-    igraph_vector_init(&v, size);
-
-    /* Read in a node and assign it to 1 vector at a time */
-    while(fscanf(file, "%d", &f) > 0) {
-        VECTOR(v)[index++] = f-1;
-    }
-
-    fclose(file);
-    igraph_create(&g, &v, 0, IGRAPH_UNDIRECTED);
-
-    return g;  
+    return get_file_handler(file_name)(file_name);
 }
 
 /* 
@@ -101,10 +105,9 @@ struct edge* get_edges(igraph_t g) {
     int edge_count = igraph_ecount(&g);
     int vector_size = igraph_vector_size(&v);
     struct edge *edges = (struct edge*)malloc(sizeof(struct edge) * edge_count);;
-    for (i = 0 ; i < vector_size- 1 ; i+=2) {
+    for (i=0, j=0; i < vector_size- 1; i+=2, j++) {
         edges[j].from = VECTOR(v)[i];
         edges[j].to = VECTOR(v)[i+1];
-        j++;
     }
     return edges;
 }
