@@ -10,8 +10,7 @@
  * find_max_betweenness() and prints the execution time.
  **/
 int main(int argc, char *argv[]) {
-    igraph_t graph = csv_create_graph(argv[1]);
-//    igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
+    igraph_t graph = create_graph(argv[1]);
 
     int vcount = igraph_vcount(&graph); // number of vertices in graph
 

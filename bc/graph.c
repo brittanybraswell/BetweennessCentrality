@@ -83,7 +83,7 @@ igraph_t (*get_file_handler(char *filename))(char *) {
     if (!dot || dot == filename) return csv_create_graph;
     /* The extension begins one character after dot, yay ptr arithmetic */
     char *extension = (dot + 1);
-    bool is_gml = strncmp(extension, "gml", MAX_EXT_LEN);
+    bool is_gml = strncmp(extension, "gml", MAX_EXT_LEN) == 0;
     /*
      * csv_create_graph is our default handler. This should probably be
      * converted to if/else branches that are switch-like if we ever decide
