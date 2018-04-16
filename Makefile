@@ -1,5 +1,8 @@
 CC = gcc
 
+# These need to be added since igraph isn't installed in a normal
+# includes folder. If the igraph package is installed on your system, these
+# lines can be removed
 CLUSTER_LDFLAG=-L/shared/lib/igraph-0.7.1/build/lib
 CLUSTER_CFLAG=-I/shared/lib/igraph-0.7.1/build/include/igraph
 

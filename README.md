@@ -20,7 +20,8 @@ To build just one, use
 make EXE
 ```
 
-where EXE is replaced with either `edge_bt` or `vertex_bt`.
+where EXE is replaced with either `edge_bt` or `vertex_bt` or anything else in
+the Makefile
 
 ## Running
 
