@@ -39,13 +39,15 @@ igraph_t gml_create_graph(char *file_name) {
 /*
  * Creates a graph given a csv file.
  */
-igraph_t csv_create_graph(char *file_name) {
+igraph_t graph_from_edgelist(char *file_name) {
     igraph_t g;
     /* Open a file */
     FILE *file = fopen (file_name, "r");
     igraph_read_graph_edgelist(&g, file, 0, IGRAPH_UNDIRECTED);
     return g;
 }
+
+#define DEFAULT_HANDLER graph_from_edgelist
 
 /*
  * Creates a graph given a text file with edges. The graph is directed.
@@ -80,16 +82,15 @@ igraph_t (*get_file_handler(char *filename))(char *) {
      * If there isn't one, just use csv_create_graph -- it's the more general
      * function
      */
-    if (!dot || dot == filename) return csv_create_graph;
+    if (!dot || dot == filename) return DEFAULT_HANDLER;
     /* The extension begins one character after dot, yay ptr arithmetic */
     char *extension = (dot + 1);
     bool is_gml = strncmp(extension, "gml", MAX_EXT_LEN) == 0;
     /*
-     * csv_create_graph is our default handler. This should probably be
-     * converted to if/else branches that are switch-like if we ever decide
-     * to support more file extensions
+     * This should probably be converted to if/else branches that are
+     * switch-like if we ever decide to support more file extensions
      */
-    return is_gml ? gml_create_graph : csv_create_graph;
+    return is_gml ? gml_create_graph : DEFAULT_HANDLER;
 }
 
 /*
