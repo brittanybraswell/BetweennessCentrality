@@ -6,6 +6,9 @@ CLUSTER_CFLAG=-I/shared/lib/igraph-0.7.1/build/include/igraph
 override CFLAGS := -std=c99 -O2 -fopenmp -ligraph $(CLUSTER_CFLAG) $(CFLAGS)
 override LDFLAGS := -fopenmp -ligraph $(CLUSTER_LDFLAG) $(LDFLAGS)
 
+# If a binary is added here, remember to also add it towards the top of
+# the .gitignore file so it doesn't end up in our git history.
+
 SRCDIR=bc
 SRCS=graph.c vertex_bt.c edge_bt.c degree.c vertex_estimate.c print.c
 OBJS=$(SRCS:.c=.o)
