@@ -1,0 +1,68 @@
+From dc88fb63090baff66a010ed1e8dae71c0ff0c221 Mon Sep 17 00:00:00 2001
+From: Kyle Laker <kyle@laker.email>
+Date: Sun, 15 Apr 2018 21:42:55 -0400
+Subject: [PATCH] Add a test patchfile for non-cluster
+
+---
+ Makefile   | 6 ++----
+ bc/graph.h | 2 +-
+ bc/print.c | 2 +-
+ bc/print.h | 2 +-
+ 4 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 71fc9b8..5f12bfe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,11 +3,9 @@ CC = gcc
+ # These need to be added since igraph isn't installed in a normal
+ # includes folder. If the igraph package is installed on your system, these
+ # lines can be removed
+-CLUSTER_LDFLAG=-L/shared/lib/igraph-0.7.1/build/lib
+-CLUSTER_CFLAG=-I/shared/lib/igraph-0.7.1/build/include/igraph
+ 
+-override CFLAGS := -std=c99 -O2 -fopenmp -ligraph $(CLUSTER_CFLAG) $(CFLAGS)
+-override LDFLAGS := -fopenmp -ligraph $(CLUSTER_LDFLAG) $(LDFLAGS)
++override CFLAGS := -std=c99 -O2 -fopenmp -ligraph $(CFLAGS)
++override LDFLAGS := -fopenmp -ligraph $(LDFLAGS)
+ 
+ # If a binary is added here, remember to also add it towards the top of
+ # the .gitignore file so it doesn't end up in our git history.
+diff --git a/bc/graph.h b/bc/graph.h
+index ea7c4a3..adbc9b9 100644
+--- a/bc/graph.h
++++ b/bc/graph.h
+@@ -1,7 +1,7 @@
+ #ifndef GRAPH_H
+ #define GRAPH_H
+ 
+-#include <igraph.h>
++#include <igraph/igraph.h>
+ 
+ void print_vector(igraph_vector_t *, FILE *);
+ igraph_t create_directed_graph(char *file_name);
+diff --git a/bc/print.c b/bc/print.c
+index be737c4..423843b 100644
+--- a/bc/print.c
++++ b/bc/print.c
+@@ -1,4 +1,4 @@
+-#include <igraph.h>
++#include <igraph/igraph.h>
+ #include <stdio.h>
+ 
+ #include "graph.h"
+diff --git a/bc/print.h b/bc/print.h
+index c1cd617..cb583e8 100644
+--- a/bc/print.h
++++ b/bc/print.h
+@@ -1,6 +1,6 @@
+ #ifndef _PRINT_H
+ #define _PRINT_H
+-#include <igraph.h>
++#include <igraph/igraph.h>
+ 
+ int print_graph(igraph_t *graph, char *out_file);
+ 
+-- 
+1.8.3.1
+
