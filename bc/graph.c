@@ -110,17 +110,3 @@ igraph_t create_graph(char* file_name) {
     return get_file_handler(file_name)(file_name);
 }
 
-/* 
- * Returns a list of edges given a graph. 
- */
-struct edge* get_edges(igraph_t g) {
-    int i, j = 0;
-    int edge_count = igraph_ecount(&g);
-    int vector_size = igraph_vector_size(&v);
-    struct edge *edges = (struct edge*)malloc(sizeof(struct edge) * edge_count);;
-    for (i=0, j=0; i < vector_size- 1; i+=2, j++) {
-        edges[j].from = VECTOR(v)[i];
-        edges[j].to = VECTOR(v)[i+1];
-    }
-    return edges;
-}
