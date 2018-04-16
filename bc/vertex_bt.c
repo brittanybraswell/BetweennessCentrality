@@ -6,6 +6,8 @@
  * with the score just calculated. 
  **/
 
+#include <stdio.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
