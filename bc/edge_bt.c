@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdio.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -9,6 +10,8 @@
 
 int main(int argc, char *argv[]) {
     igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
+
+    fprintf(stderr, "Warning. edge_bt is not parallelized\n");
 
     int ecount = igraph_ecount(&graph); // number of edges in graph
 
