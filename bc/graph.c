@@ -84,6 +84,11 @@ igraph_t (*get_file_handler(char *filename))(char *) {
     /* The extension begins one character after dot, yay ptr arithmetic */
     char *extension = (dot + 1);
     bool is_gml = strncmp(extension, "gml", MAX_EXT_LEN);
+    /*
+     * csv_create_graph is our default handler. This should probably be
+     * converted to if/else branches that are switch-like if we ever decide
+     * to support more file extensions
+     */
     return is_gml ? gml_create_graph : csv_create_graph;
 }
 
@@ -91,9 +96,16 @@ igraph_t (*get_file_handler(char *filename))(char *) {
  * Creates a graph given a text file with edges
  */
 igraph_t create_graph(char* file_name) {
-    igraph_t g;
-    int size, f, index = 0;
-
+    /*
+     * Okay, so this is kinda gross-looking. But get_file_handler needs to
+     * take in file_name so it can determine the handler based on the
+     * extension. Then file_name needs to be passed to the handler. I'd like
+     * to see a cleaner way to do this eventually, but I am hesitant to make
+     * get_file_handler call the handler. I also don't want to have to do it
+     * elsewhere in the project (like at all the callsites that currently call
+     * this function. And we're keeping this function around for legacy reasons
+     * anyway, because it's existed since the beginning and everyone calls it.
+     */
     return get_file_handler(file_name)(file_name);
 }
 
