@@ -11,6 +11,7 @@ int ecount;
 
 igraph_real_t find_max_betweenness();
 igraph_real_t max_betweenness();
+void get_paths();
 
 /*
  * This main function is the equivalent of ONE iteration of the Girvan-Newman
@@ -32,6 +33,11 @@ int main(int argc, char *argv[]) {
 
     graph = create_graph(argv[1]);           // creates graph of given dataset
     ecount = igraph_ecount(&graph);          // number of edges in graph
+
+    /* WORK IN PROGRESS
+    max_betweenness();
+    get_paths();
+    */ 
 
     // print the number of edges before removal
     fprintf(stderr,"Number of edges is %d\n", ecount);
@@ -78,10 +84,10 @@ igraph_real_t find_max_betweenness() {
     igraph_vector_init(&edges, ecount);
 
     // fill the vector with the ebt values
-    igraph_edge_betweenness(&graph, &edges, IGRAPH_UNDIRECTED, 0);
+    igraph_edge_betweenness(&graph, &edges, IGRAPH_DIRECTED, 0);
 
     // get the edge id of the edge with the greatest value
-    max_edge = igraph_vector_max(&edges);
+    max_edge = igraph_vector_which_max(&edges);
 
     // print the edge id of the selected edge
     fprintf(stderr, "Edge Selected: %li\n", max_edge);
@@ -91,6 +97,21 @@ igraph_real_t find_max_betweenness() {
 
     // return the id of the edge with the highest ebt value
     return max_edge;
+}
+
+int print_matrix(const igraph_matrix_t *m) {
+    long int nrow = igraph_matrix_nrow(m);
+    long int ncol = igraph_matrix_ncol(m);
+    long int i, j;
+
+    for (i = 1; i < nrow; i++) {
+        printf("%li:", i);
+        for (j = 1; j < ncol; j++) {
+            printf(" %3.0F", MATRIX(*m, i, j));
+        }
+        printf("\n");
+    }
+    return 0;
 }
 
 /*
@@ -103,9 +124,59 @@ igraph_real_t find_max_betweenness() {
 igraph_real_t max_betweenness() {
     // just a temp value for compiling the stub
     igraph_real_t max_edge = 0;
+    igraph_matrix_t res;
 
+    igraph_matrix_init(&res, 0, 0);
+    igraph_shortest_paths(&graph, &res, igraph_vss_all(), igraph_vss_all(), IGRAPH_ALL);
+    
+    //print_matrix(&res);
 
+    igraph_matrix_destroy(&res);
+
+    // then we need to use them to create 
     return max_edge;
+}
+
+/*
+ * This is another helper for our ideas of implemenations, this is to get all
+ * of the edges in each shortest path.  We would then take the paths, iterate
+ * over each of them and on an additional vector_pointer each element would be
+ * the edge id and number of times it was used while iterating, select the max
+ * id and return it and we should get the same edges as above
+ *
+ *
+ *
+ *
+ * VERY BROKEN STILL DO NOT USE
+ */
+void get_paths() {
+    igraph_vector_ptr_t evecs;
+    igraph_vector_long_t pred;
+    igraph_vector_long_t inbound;
+    long int i;
+    igraph_vs_t vs;
+
+    igraph_vector_ptr_init(&evecs, igraph_vcount(&graph));
+    igraph_vector_long_init(&pred, 0);
+    igraph_vector_long_init(&inbound, 0);
+
+    for (i = 0; i < igraph_vector_ptr_size(&evecs); i++) {
+        VECTOR(evecs)[i] = calloc(1, sizeof(igraph_vector_t));
+        igraph_vector_init(VECTOR(evecs)[i], 0);
+    }
+
+    igraph_vs_all(&vs);
+
+    igraph_get_shortest_paths(&graph, 0, &evecs, 0, vs, IGRAPH_IN, 0, 0);
+
+    for (i = 0; i < igraph_vector_ptr_size(&evecs); i++) {
+        print_vector(VECTOR(evecs)[i], stderr);
+        igraph_vector_destroy(VECTOR(evecs)[1]);
+        free(VECTOR(evecs)[i]);
+    }
+
+    igraph_vector_ptr_destroy(&evecs);
+    igraph_vs_destroy(&vs);
 }
 
 // end of file
