@@ -13,12 +13,12 @@ override LDFLAGS := -fopenmp -ligraph $(CLUSTER_LDFLAG) $(LDFLAGS)
 # the .gitignore file so it doesn't end up in our git history.
 
 SRCDIR=bc
-SRCS=graph.c vertex_bt.c edge_bt.c degree.c vertex_estimate.c print.c
+SRCS=graph.c vertex_bt.c edge_bt.c degree.c vertex_estimate.c print.c girvan-newman.c
 OBJS=$(SRCS:.c=.o)
 
 default: all
 
-all: edge_bt vertex_bt degree vertex_estimate print
+all: edge_bt vertex_bt degree vertex_estimate print girvan-newman
 
 edge_bt: graph.o edge_bt.o
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -35,10 +35,13 @@ vertex_estimate: graph.o vertex_estimate.o
 print: graph.o print.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
+girvan-newman: graph.o girvan-newman.o
+	$(CC) $(LDFLAGS) $^ -o $@
+
 %.o: $(SRCDIR)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o vertex_bt edge_bt degree vertex_estimate print
+	rm -f *.o vertex_bt edge_bt degree vertex_estimate print girvan-newman
 
 .PHONY: all default clean
