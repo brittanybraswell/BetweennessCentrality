@@ -5,6 +5,7 @@
 #endif
 
 #include "graph.h"
+#include "util.h"
 
 // global variables
 igraph_t graph;
@@ -12,8 +13,8 @@ int ecount;
 bool igraph = true;
 
 // function prototypes
-igraph_real_t igraph_find_max_betweenness();
-igraph_real_t other_find_max_betweenness();
+compare_t igraph_find_max_betweenness();
+compare_t other_find_max_betweenness();
 igraph_vector_ptr_t get_paths(long int);
 
 /*
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
     graph = create_graph(argv[1]);           // creates graph of given dataset
     ecount = igraph_ecount(&graph);          // number of edges in graph
 
-    igraph_real_t max;
+    compare_t max;
     igraph_es_t edge_selector;
 
     /**********************************************************/
@@ -55,10 +56,10 @@ int main(int argc, char *argv[]) {
     }
 
     // output the edge id of the selected edge
-    fprintf(stderr, "Edge Selected: %li\n", max);
+    fprintf(stderr, "Edge Selected: %d\n", max.id);
 
     // delete the edge from the graph
-    igraph_es_1(&edge_selector, max);
+    igraph_es_1(&edge_selector, max.id);
     igraph_delete_edges(&graph, edge_selector);
 
     STOP_TIMER(find_max);
@@ -80,9 +81,8 @@ int main(int argc, char *argv[]) {
  * for a graph, which will be removed.  This is the implementation that uses
  * the igraph_edge_betweenness() function.
  */
-igraph_real_t igraph_find_max_betweenness() {
-    igraph_real_t max_edge;          // the id of the edge with the highest ebt
-    igraph_vector_t edges;           // this vector will store the edge betweenness values for each edge id
+compare_t igraph_find_max_betweenness() {
+    igraph_vector_t edges;           
 
     igraph_vector_init(&edges, ecount);
 
@@ -90,7 +90,23 @@ igraph_real_t igraph_find_max_betweenness() {
     igraph_edge_betweenness(&graph, &edges, IGRAPH_DIRECTED, 0);
 
     // get the edge id of the edge with the greatest value
-    max_edge = igraph_vector_which_max(&edges);
+    int curr_edge;
+    compare_t max_edge;
+    max_edge.max_betweenness_score = -1;
+    max_edge.id = -1;
+
+    for (curr_edge = 0; curr_edge < ecount; curr_edge++) {
+        double score = (double) VECTOR(edges)[curr_edge];
+
+        // this print statment is here to check the edge betweenness values
+        // will be removed later
+        fprintf(stderr,"%f\n", score);
+
+        if (score > max_edge.max_betweenness_score) {
+            max_edge.max_betweenness_score = score;
+            max_edge.id = curr_edge;
+        }
+    }
 
     // clean up and destroy
     igraph_vector_destroy(&edges);
@@ -106,32 +122,47 @@ igraph_real_t igraph_find_max_betweenness() {
  * the edge with the highest betweenness.
  *
  *
- * Currently this only gets all paths from node 1 and then prints the edgeids
- * for all paths.
+ * Almost done, just a small bug with the betweenness calculation
  *
  */
-igraph_real_t other_find_max_betweenness() {
-    igraph_real_t max_edge;
+compare_t other_find_max_betweenness() {
+    compare_t max_edge;
     igraph_vector_ptr_t path;
-    igraph_vector_t counts;
-    int i, j;
+    igraph_vector_t betweenness;
+    int i, j, k;
     
-    igraph_vector_init(&counts, igraph_ecount(&graph) + 1);
+    igraph_vector_init(&betweenness, igraph_ecount(&graph));
 
     // this loop is for ensuring we use all root nodes
     for (i = 0; i < igraph_vcount(&graph); i++) {
         path = get_paths(i);
 
         // this loop is to get the counts of each edge from each vector
-        // but currently just prints all the vectors
+        // the bug is somewhere around here
         for (j = 0; j < igraph_vector_ptr_size(&path); j++) {
-            print_vector(VECTOR(path)[j], stderr);
-            igraph_vector_destroy(VECTOR(path)[j]);
-            free(VECTOR(path)[j]);
+            for (k = 0; k < ecount; k++) {
+                if (igraph_vector_contains(VECTOR(path)[j], k)) {
+                     VECTOR(betweenness)[k] = VECTOR(betweenness)[k] + 1;
+                }
+            }
         }
     }
 
-    max_edge = igraph_vector_which_max(&counts);
+    // this is to check the betweenness values (will be removed later)
+    print_vector(&betweenness, stderr);
+
+    // get the id of the most traveled edge
+    max_edge.max_betweenness_score = -1;
+    max_edge.id = -1;
+
+    for (i = 0; i < ecount; i++) {
+        double score = VECTOR(betweenness)[i];
+        if (score > max_edge.max_betweenness_score) {
+            max_edge.max_betweenness_score = score;
+            max_edge.id = i;
+        }
+    }
+    
     return max_edge;
 }
 
