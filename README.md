@@ -27,3 +27,6 @@ the Makefile
 
 Source `setup.sh`. Run the binary with the appropriate `OMP_NUM_THREADS`
 environment variable or execute `test.sh` if you have `slurm`.
+
+All executables take the name of a single dataset file in `bc/data`. Either
+an absolute path or relative path from CWD must be supplied.
