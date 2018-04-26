@@ -168,7 +168,7 @@ compare_t other_find_max_betweenness() {
 
     // this loop is for ensuring we use all root nodes
     // the bug is here as not all edges are being accounted for in all iterations
-    for (i = 1; i < igraph_vcount(&graph); i++) {
+    for (i = igraph_vcount(&graph) / 2; i < igraph_vcount(&graph); i++) {
         path = get_paths(i);
 
         // this loop is to get the counts of each edge from each vector if it is used, or not
