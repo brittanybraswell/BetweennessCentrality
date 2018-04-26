@@ -20,6 +20,11 @@
  * find_max_betweenness() and prints the execution time.
  **/
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        print_usage(argv[0]);
+        return 1;
+    }
+
     igraph_t graph = create_graph(argv[1]); // creates graph of given dataset
 
     int vcount = igraph_vcount(&graph); // number of vertices in graph

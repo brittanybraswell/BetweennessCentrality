@@ -3,6 +3,7 @@
 
 #include <igraph.h>
 
+void print_usage(const char *);
 void print_vector(igraph_vector_t *, FILE *);
 igraph_t create_directed_graph(char *file_name);
 igraph_t create_graph(char*);

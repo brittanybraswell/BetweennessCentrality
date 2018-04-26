@@ -13,6 +13,11 @@
 
 igraph_vector_t v;  //global variable
 
+/* Helper to print usage info */
+void print_usage(const char *program) {
+    printf("Usage: %s DATASET\n", program);
+}
+
 /*
  * Checks if create_graph is correct.
  *

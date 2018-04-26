@@ -29,6 +29,11 @@ int main(int argc, char *argv[]) {
      * Try this with a directed graph; to me this makes more sense with our
      * datasets.
      */
+    if (argc < 2) {
+        print_usage(argv[0]);
+        return 1;
+    }
+
     igraph_t graph = create_directed_graph(argv[1]);
 
     /*
